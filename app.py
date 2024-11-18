@@ -14,8 +14,9 @@ from langchain_core.prompts import ChatPromptTemplate
 # Configuration.
 #model = "gemma2:9b"
 model = "gemma2:27b"
+#model = "llama3.2-vision"
 default_user_input = "In Heilbronn hat ein Würzburger die Tauben gefüttert."
-
+default_user_input = ""
 
 # The state space for the FSM as an enum.
 class ConversationState(int, Enum):
@@ -144,6 +145,9 @@ class Application:
 
 
     def on_send_click(self, user_input):
+
+        if user_input.strip() == "":
+            return self.chat_messages, "", "", gr.update(visible=True), gr.update(visible=False)
 
         # Add the user message to the chat.
         self.add_chat_message("user", user_input, is_article_message=True)
