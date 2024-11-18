@@ -26,6 +26,10 @@ class ConversationState(int, Enum):
 
 
 class Application:
+    """
+    The main application class.
+    Here we define the user interface and the state machine.    
+    """
 
     def __init__(self, development=False):
         self._main_window = None
@@ -51,10 +55,13 @@ class Application:
     
 
     def initialize(self):
+
+        # Initialize the chat messages.
         self.chat_messages = []
         self.article_messages = []
         self.article = ""
 
+        # Initialize the state machine.
         self.state = ConversationState.BEGIN
         self.time_in_steps = 0
         self.run_state_machine()
@@ -88,11 +95,20 @@ class Application:
                 send_button = gr.Button("Send")
 
             # Add the article column.
+            # This will be hidden until the article is ready.
             with gr.Column(visible=False) as self.article_column:
                 gr.Markdown("## Danke für die Informationen! Hier ist der Artikel:")
 
+                # Add horizontal line.
+                gr.HTML("<hr>")
+
                 # Add a text box for the article.
-                self.article_text_box = gr.Textbox(label=None, show_label=False, lines=5, placeholder="", value="", interactive=False)
+                self.article_text_box = gr.Markdown(label=None, show_label=False, value="")
+
+                # Add a horizontal line.
+                gr.HTML("<hr>")
+
+                gr.Markdown("Der Artikel wurde gespeichert und steht ab jetzt unseren Redakteuren zur Verfügung.")
 
                 # Add restart button.
                 restart_button = gr.Button("Restart")
