@@ -22,14 +22,20 @@ class ConversationState(int, Enum):
     BEGIN = 0
     CHECK_FOR_MORE = 1
     WRITE_ARTICLE = 2
+    DONE = 3
 
 
 class Application:
 
     def __init__(self, development=False):
         self._main_window = None
+        self.initialize()
+ 
+
+    def initialize(self):
         self.chat_messages = []
         self.article_messages = []
+        self.article = ""
 
         self.state = ConversationState.BEGIN
         self.time_in_steps = 0
@@ -38,49 +44,70 @@ class Application:
 
     def build_interface(self):
 
+        # CSS to deacivate the footer.
+        css = "footer {visibility: hidden}"
+
         # Create the main window.
-        with gr.Blocks(theme=gr.themes.Soft()) as self.demo:
+        with gr.Blocks(theme=gr.themes.Soft(), css=css) as self.demo:
 
             # Add the logos.
             with open("assets/stimme.svg", "r") as file:
                 svg_content_1 = file.read()
             with open("assets/42.svg", "r") as file:
                 svg_content_2 = file.read()
-            html_content = f"""
-            <div style="display: flex; height: 50pt; width: 100%;">
-                <div style="flex: 1; background-color: #0085c2; display: flex; align-items: center; justify-content: center; padding: 5pt;">
-                    <div style="height: 90%; width: 90%; display: flex; align-items: center; justify-content: center;">
-                        <svg style="height: 100%; width: 100%; object-fit: contain; margin: auto;">{svg_content_1}</svg>
-                    </div>
-                </div>
-                <div style="flex: 1; background-color: #ffffff; display: flex; align-items: center; justify-content: center; padding: 5pt;">
-                    <div style="height: 90%; width: 90%; display: flex; align-items: center; justify-content: center;">
-                        <svg style="height: 100%; width: 100%; object-fit: contain; margin: auto;">{svg_content_2}</svg>
-                    </div>
-                </div>
-            </div>
-            """
+            with open("assets/header.html", "r") as file:
+                html_content = file.read().format(svg_content_1=svg_content_1, svg_content_2=svg_content_2)
             gr.HTML(html_content)
 
-            # Add the chatbot.
-            self.chat_bot = gr.Chatbot(type="messages", show_label=False, value=self.chat_messages)
-            
-            # Add the text box for user input and the send button.
-            self.text_box = gr.Textbox(label=None, show_label=False, lines=5, placeholder="Enter text here", value=default_user_input)
-            send_button = gr.Button("Send")
+            # Add the main column.
+            with gr.Column() as self.main_column:
+
+                # Add the chatbot.
+                self.chat_bot = gr.Chatbot(type="messages", show_label=False, value=self.chat_messages)
+                
+                # Add the text box for user input and the send button.
+                self.text_box = gr.Textbox(label=None, show_label=False, lines=5, placeholder="Enter text here", value=default_user_input)
+                send_button = gr.Button("Send")
+
+            # Add the article column.
+            with gr.Column(visible=False) as self.article_column:
+                gr.Markdown("## Danke für die Informationen! Hier ist der Artikel:")
+
+                # Add a text box for the article.
+                self.article_text_box = gr.Textbox(label=None, show_label=False, lines=5, placeholder="", value="", interactive=False)
+
+                # Add restart button.
+                restart_button = gr.Button("Restart")
+
+            # Add a footer.
+            with open("assets/footer.html", "r") as file:
+                footer_content = file.read()
+            gr.HTML(footer_content)
 
             # Add the handlers.
             send_button.click(
                 self.on_send_click,
                 inputs=[self.text_box],
-                outputs=[self.chat_bot, self.text_box]
+                outputs=[self.chat_bot, self.text_box, self.article_text_box, self.main_column, self.article_column]
             )
             self.text_box.submit(
                 self.on_send_click,
                 inputs=[self.text_box],
-                outputs=[self.chat_bot, self.text_box]
+                outputs=[self.chat_bot, self.text_box, self.article_text_box, self.main_column, self.article_column]
             )
-        
+
+            # Make the main column invisible when the reset button is clicked.
+            restart_button.click(
+                self.on_restart_click,
+                inputs=[],
+                outputs=[self.chat_bot, self.main_column, self.article_column]
+            )
+
+
+    def on_restart_click(self):
+        self.initialize()
+        return self.chat_messages, gr.update(visible=True), gr.update(visible=False)
+
 
     def on_send_click(self, user_input):
 
@@ -90,8 +117,17 @@ class Application:
         # Run the state machine.
         self.run_state_machine()
 
+        # Handle the end.
+        article_text = ""   
+        main_column_visible = True
+        article_column_visible = False
+        if self.state == ConversationState.DONE:
+            article_text = self.article
+            main_column_visible = False
+            article_column_visible = True
+
         # Return the chat messages.
-        return self.chat_messages, ""
+        return self.chat_messages, "", article_text, gr.update(visible=main_column_visible), gr.update(visible=article_column_visible)
 
 
     def run_state_machine(self):
@@ -148,6 +184,7 @@ class Application:
             self.add_chat_message("assistant", text)
 
             text = self.write_article()
+            self.article = text
             self.add_chat_message("assistant", text)
 
             # Put the text in a file.
@@ -169,6 +206,10 @@ class Application:
                 file.write(self.get_dialogue(article_messages_only=False))
                 print(f"Article written to {article_path}")
 
+            # Done.
+            self.state = ConversationState.DONE
+            
+
 
         # Invalid state.
         else:
@@ -176,10 +217,6 @@ class Application:
         
 
     def refinement(self):
-
-        # Get all the human messages.
-        #human_messages = [message["content"] for message in st.session_state.messages if message["role"] == "user"]
-        #user_texts = "\n\n".join(human_messages)
 
         dialogue = self.get_dialogue()
 
