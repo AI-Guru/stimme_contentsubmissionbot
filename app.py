@@ -3,6 +3,8 @@ import gradio as gr
 from fastapi import FastAPI
 from enum import Enum
 import time
+import logging
+import uuid
 from langchain_core.prompts.chat import HumanMessagePromptTemplate, AIMessagePromptTemplate, SystemMessagePromptTemplate
 from langchain_community.chat_models import ChatOllama
 from langchain_core.output_parsers import StrOutputParser
@@ -12,8 +14,6 @@ from langchain_core.prompts import ChatPromptTemplate
 # Configuration.
 #model = "gemma2:9b"
 model = "gemma2:27b"
-
-
 default_user_input = "In Heilbronn hat ein Würzburger die Tauben gefüttert."
 
 
@@ -29,8 +29,26 @@ class Application:
 
     def __init__(self, development=False):
         self._main_window = None
+        self.logger = self.create_logger()
         self.initialize()
+        self.logger.info("Application initialized.")
  
+
+    def create_logger(self):
+        uuid_str = str(uuid.uuid4())
+        logger = logging.getLogger(uuid_str)
+        logger.setLevel(logging.DEBUG)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        file_handler = logging.FileHandler(f"gradio.log")
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.DEBUG)
+        console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)
+        return logger
+    
 
     def initialize(self):
         self.chat_messages = []
@@ -188,7 +206,7 @@ class Application:
             self.add_chat_message("assistant", text)
 
             # Put the text in a file.
-            print("Writing article to file...")
+            self.logger.info("Writing article to file...")
             timestamp = time.strftime("%Y%m%d-%H%M%S")
             filename = f"{timestamp}.txt"
             article_path = os.path.join("articles", filename)
@@ -204,13 +222,11 @@ class Application:
                 file.write("All messages:")
                 file.write("\n")
                 file.write(self.get_dialogue(article_messages_only=False))
-                print(f"Article written to {article_path}")
+                self.logger.info(f"Article written to {article_path}")
 
             # Done.
             self.state = ConversationState.DONE
             
-
-
         # Invalid state.
         else:
             raise ValueError(f"Invalid state: {self.state}")
@@ -260,13 +276,13 @@ class Application:
      
 
     def invoke_model(self, system_message, human_message):
-        print("System message:", system_message)
-        print("Human message:", human_message)
+        self.logger.info(f"System message: {system_message}")
+        self.logger.info(f"Human message: {human_message}")
         llm = ChatOllama(model=model)
         prompt = ChatPromptTemplate.from_messages([system_message, human_message])
         chain = prompt | llm | StrOutputParser()
         text = chain.invoke({})
-        print("Model response:", text)
+        self.logger.info(f"Model response: {text}")
         return text
 
 
