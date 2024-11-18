@@ -1,0 +1,9 @@
+Hier ist ein Text, die ein Bürger geliefert hat:
+
+{user_texts}
+
+Falls da noch etwas fehlt, das den Artikel vervollständigen würde, frage bitte nach. Achte aber drauf, dass du nur ein paar wenige Fragen auf einmal stellst. Und frage nur insgesamt maximal viermal nach.
+
+Falls du keine Fragen stellen magst, weil es nicht nötig ist, antworte mit "TASK DONE".
+
+Du hast insgesamt {steps} mal nachgefragt.
