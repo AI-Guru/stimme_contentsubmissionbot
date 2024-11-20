@@ -51,3 +51,17 @@ gradio run.py
 ```
 http://0.0.0.0:8001/?__theme=light
 ```
+
+## Docker
+
+Build the container:
+
+```
+docker build -t stimme_contentsubmissionbot .
+```
+
+Run it:
+
+```
+docker run --rm -it -p 8001:8001 stimme_contentsubmissionbot
+```

@@ -18,6 +18,9 @@ model = "gemma2:27b"
 default_user_input = "In Heilbronn hat ein Würzburger die Tauben gefüttert."
 default_user_input = ""
 
+ollama_host = "http://host.docker.internal:11434"
+#ollama_host = "http://localhost:11434"
+
 # The state space for the FSM as an enum.
 class ConversationState(int, Enum):
     BEGIN = 0
@@ -298,7 +301,10 @@ class Application:
     def invoke_model(self, system_message, human_message):
         self.logger.info(f"System message: {system_message}")
         self.logger.info(f"Human message: {human_message}")
-        llm = ChatOllama(model=model)
+        llm = ChatOllama(
+            base_url=ollama_host,
+            model=model
+        )
         prompt = ChatPromptTemplate.from_messages([system_message, human_message])
         chain = prompt | llm | StrOutputParser()
         text = chain.invoke({})
