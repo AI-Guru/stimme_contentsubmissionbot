@@ -18,8 +18,10 @@ model = "gemma2:27b"
 default_user_input = "In Heilbronn hat ein Würzburger die Tauben gefüttert."
 default_user_input = ""
 
-#ollama_host = "http://host.docker.internal:11434"
-ollama_host = "http://localhost:11434"
+if "OLLAMA_HOST" in os.environ:
+    ollama_host = os.environ["OLLAMA_HOST"]
+else:
+    ollama_host = "http://host.docker.internal:11434"
 
 # The state space for the FSM as an enum.
 class ConversationState(int, Enum):
