@@ -18,8 +18,8 @@ model = "gemma2:27b"
 default_user_input = "In Heilbronn hat ein Würzburger die Tauben gefüttert."
 default_user_input = ""
 
-ollama_host = "http://host.docker.internal:11434"
-#ollama_host = "http://localhost:11434"
+#ollama_host = "http://host.docker.internal:11434"
+ollama_host = "http://localhost:11434"
 
 # The state space for the FSM as an enum.
 class ConversationState(int, Enum):
@@ -40,6 +40,9 @@ class Application:
         self.logger = self.create_logger()
         self.initialize()
         self.logger.info("Application initialized.")
+        self.output_path = "articles"
+        if not os.path.exists(self.output_path):
+            os.makedirs(self.output_path)
  
 
     def create_logger(self):
@@ -232,9 +235,7 @@ class Application:
             self.logger.info("Writing article to file...")
             timestamp = time.strftime("%Y%m%d-%H%M%S")
             filename = f"{timestamp}.txt"
-            article_path = os.path.join("articles", filename)
-            if not os.path.exists("articles"):
-                os.makedirs("articles")
+            article_path = os.path.join(self.output_path, filename)
             with open(article_path, "w") as file:
                 file.write(text)
                 file.write("\n")
@@ -250,6 +251,10 @@ class Application:
             # Done.
             self.state = ConversationState.DONE
             
+        # Done state.
+        elif self.state == ConversationState.DONE:
+            pass
+        
         # Invalid state.
         else:
             raise ValueError(f"Invalid state: {self.state}")

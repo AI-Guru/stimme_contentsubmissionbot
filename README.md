@@ -63,5 +63,5 @@ docker build -t stimme_contentsubmissionbot .
 Run it:
 
 ```
-docker run --rm -it -p 8001:8001 stimme_contentsubmissionbot
+docker run --rm -it -p 8001:8001 -v $(pwd)/articles:/app/articles stimme_contentsubmissionbot
 ```
