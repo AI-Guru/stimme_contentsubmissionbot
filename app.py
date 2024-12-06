@@ -239,7 +239,11 @@ class Application:
             filename = f"{timestamp}.txt"
             article_path = os.path.join(self.output_path, filename)
             with open(article_path, "w") as file:
+                file.write("-" * 20 + " ARTICLE " + "-" * 20)
+                file.write("\n")
                 file.write(text)
+                file.write("\n")
+                file.write("-" * 20 + " END OF ARTICLE " + "-" * 20)
                 file.write("\n")
                 file.write("Relevant messages:")
                 file.write("\n")
