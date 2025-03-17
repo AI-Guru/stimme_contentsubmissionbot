@@ -1,7 +1,9 @@
-Hier ist ein Text, die ein Bürger geliefert hat:
+Hier ist ein Text, den ein Bürger geliefert hat:
 
 {user_texts}
 
-Heute ist der: {date} Achte darauf, dass der Bürger ggf. relative Zeitangaben macht. Schreibe das Datum auch unter die Überschrift. Und daneben bitte eine Ortsangabe.
+Heute ist der: {date} Achte darauf, dass der Bürger ggf. relative Zeitangaben macht. Schreibe das Datum unter die Überschrift. Und daneben bitte eine Ortsangabe.
+
+Nutze ausschließlich die dir vorliegenden Informationen. Sei genau und neutral.
 
 Bitte schreibe daraus einen Artikel mit Überschrift und Text. Anworte nur mit dem Artikel.

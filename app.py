@@ -79,7 +79,7 @@ class Application:
     def build_interface(self):
 
         # CSS to deacivate the footer.
-        css = "footer {visibility: hidden}"
+        css = 'footer {visibility: hidden} #chatbox [title="Clear"] {display: none} @font-face { font-family:"NNStimmeGotesk Bold";src: url("https://www.stimme-mediengruppe.de/wp-content/uploads/2021/09/NNStimmeGrotesk-Bold.woff2") format("woff2"),url("https://www.stimme-mediengruppe.de/wp-content/uploads/2021/09/NNStimmeGrotesk-Bold.woff") format("woff");font-weight: normal;font-style: normal;font-display: block;} @font-face {font-family: "NNStimmeGotesk Normal";src: url("https://www.stimme-mediengruppe.de/wp-content/uploads/2021/09/NNStimmeGrotesk-Normal.woff2") format("woff2"),url("https://www.stimme-mediengruppe.de/wp-content/uploads/2021/09/NNStimmeGrotesk-Normal.woff") format("woff");font-weight: normal;font-style: normal;font-display: block;}*{font-family: "NNStimmeGotesk Normal";} button{font-family: "NNStimmeGotesk Bold";}'
 
         # Create the main window.
         with gr.Blocks(theme=gr.themes.Soft(), css=css) as self.demo:
@@ -97,11 +97,11 @@ class Application:
             with gr.Column() as self.main_column:
 
                 # Add the chatbot.
-                self.chat_bot = gr.Chatbot(type="messages", show_label=False, value=self.chat_messages)
+                self.chat_bot = gr.Chatbot(type="messages", show_label=False, elem_id="chatbox", value=self.chat_messages)
                 
                 # Add the text box for user input and the send button.
-                self.text_box = gr.Textbox(label=None, show_label=False, lines=5, placeholder="Enter text here", value=default_user_input)
-                send_button = gr.Button("Send")
+                self.text_box = gr.Textbox(label=None, show_label=False, lines=5, placeholder="Sende eine Nachricht an Kim", value=default_user_input)
+                send_button = gr.Button("Senden")
 
             # Add the article column.
             # This will be hidden until the article is ready.
@@ -120,7 +120,7 @@ class Application:
                 gr.Markdown("Der Artikel wurde gespeichert und steht ab jetzt unseren Redakteuren zur Verfügung.")
 
                 # Add restart button.
-                restart_button = gr.Button("Restart")
+                restart_button = gr.Button("Neu beginnen")
 
             # Add a footer.
             with open("assets/footer.html", "r") as file:
@@ -297,7 +297,7 @@ class Application:
         dialogue = self.get_dialogue(article_messages_only=True)
 
         # Get the date as DD.MM.YYYY.
-        date = time.strftime("%d.%m.%Y")
+        date = time.strftime("%d.%m.%Y %H:%M Uhr")
 
         system_message = SystemMessagePromptTemplate.from_template_file("prompttemplates/system.txt", input_variables=[])
         system_message = system_message.format()

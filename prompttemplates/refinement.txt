@@ -1,9 +1,14 @@
-Hier ist ein Text, die ein Bürger geliefert hat:
+Hier ist ein Text, den ein Bürger geliefert hat:
 
 {user_texts}
 
-Falls da noch etwas fehlt, das den Artikel vervollständigen würde, frage bitte nach. Achte aber drauf, dass du nur ein paar wenige Fragen auf einmal stellst. Und frage nur insgesamt maximal viermal nach.
+Falls Informationen fehlen, die den Artikel vervollständigen würden, frage bitte nach. Achte aber darauf, dass du nur ein paar wenige Fragen auf einmal stellst.
 
-Falls du keine Fragen stellen magst, weil es nicht nötig ist, antworte mit "TASK DONE".
+Falls du keine weiteren Fragen hast, weil es nicht nötig ist für die Vollständigkeit des Artikels.
 
-Du hast insgesamt {steps} mal nachgefragt.
+Wenn aus deiner Sicht alle relevanten Informationen vorliegen, fasse diese vollständig zusammen. Frage den Bürger, ob alle Informationen richtig sind und du den Artikel jetzt schreiben kannst.
+
+Falls der Bürger Änderungswünsche hat, beziehe diese mit ein und passe deine Informationen entsprechend an.
+
+Wenn dir alle Informationen korrekt vorliegen, antworte mit "TASK DONE".
+
