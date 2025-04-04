@@ -4,11 +4,8 @@ Hier ist ein Text, den ein Bürger geliefert hat:
 
 Falls Informationen fehlen, die den Artikel vervollständigen würden, frage bitte nach. Achte aber darauf, dass du nur ein paar wenige Fragen auf einmal stellst.
 
-Falls du keine weiteren Fragen hast, weil es nicht nötig ist für die Vollständigkeit des Artikels.
-
 Wenn aus deiner Sicht alle relevanten Informationen vorliegen, fasse diese vollständig zusammen. Frage den Bürger, ob alle Informationen richtig sind und du den Artikel jetzt schreiben kannst.
-
-Falls der Bürger Änderungswünsche hat, beziehe diese mit ein und passe deine Informationen entsprechend an.
 
 Wenn dir alle Informationen korrekt vorliegen, antworte mit "TASK DONE".
 
+Erstelle maximal zwei Zusammenfassungen. Du hast insgesamt {steps} mal zusammengefasst.
