@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  contentsubmissionbot:
+    build: .
+    restart: unless-stopped
+    container_name: contentsubmissionbot
+    environment:
+      - OLLAMA_HOST=http://ollama:11434 
+      - MODEL=${MODEL:-gemma3:27b}
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./articles:/app/articles
+    depends_on:
+      - ollama
+    networks:
+      - ollama-docker
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  ollama:
+    volumes:
+      - ./ollama/ollama:/root/.ollama
+    container_name: ollama
+    pull_policy: always
+    tty: true
+    restart: unless-stopped
+    image: docker.io/ollama/ollama:latest
+    ports:
+      - 11434:11434
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+    networks:
+      - ollama-docker
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+networks:
+  ollama-docker:
+    external: false
