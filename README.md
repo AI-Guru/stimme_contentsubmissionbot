@@ -129,3 +129,34 @@ Run it:
 ```
 docker run --rm -it -p 8001:8001 -v $(pwd)/articles:/app/articles stimme_contentsubmissionbot
 ```
+
+## Docker Compose
+
+You can also run the application with Docker Compose, which will set up both the content submission bot and the Ollama model server:
+
+```bash
+# Start the services
+docker compose up -d
+
+# View logs
+docker compose logs -f
+
+# Stop the services
+docker compose down
+```
+
+By default, the application will use the `gemma3:27b` model. You can specify a different model by setting the MODEL environment variable:
+
+```bash
+MODEL=gemma2:27b docker compose up -d
+```
+
+### Docker Compose Features:
+
+- **Automatic Model Serving**: Includes and configures the Ollama service for model inference
+- **Volume Mounting**: Persists articles and Ollama models between container restarts
+- **Health Checks**: Monitors application health with built-in health checks
+- **GPU Support**: Configured to use NVIDIA GPU if available
+- **Network Isolation**: Services communicate over an isolated network
+
+The application will be available at http://localhost:8001 after startup.
