@@ -12,6 +12,70 @@ The tool encourages readers to actively contribute stories, enriching local repo
 - **Open Source:** Fully open-source and free to use.  
 - **Community-Oriented:** Promotes local journalism and fosters stronger reader engagement.
 
+## Workflow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant UI as Gradio Interface
+    participant LLM as Language Model
+    participant FS as File System
+
+    Note over User, FS: Application Initialization
+    UI->>LLM: Load welcome messages
+    LLM-->>UI: Return welcome & what messages
+    UI->>UI: Initialize state (CHECK_FOR_MORE)
+    UI-->>User: Display welcome messages
+    
+    loop Information Gathering
+        User->>UI: Submit information
+        UI->>UI: Add message to chat & article messages
+        UI->>LLM: Process dialogue with refinement.txt
+        LLM-->>UI: Return response or "TASK DONE"
+        
+        alt More Information Needed
+            UI-->>User: Display follow-up question
+        else Ready to Write Article
+            UI->>UI: Change state to WRITE_ARTICLE
+            UI-->>User: Display "writing article" message
+            UI->>LLM: Process with writearticle.txt
+            LLM-->>UI: Return article text
+            UI->>FS: Save article with timestamp
+            UI->>UI: Change state to DONE
+            UI-->>User: Display article & confirmation
+            UI->>UI: Switch to article view
+        end
+    end
+    
+    User->>UI: Click "Neu beginnen"
+    UI->>UI: Reset state to BEGIN
+    UI-->>User: Return to chat interface
+```
+
+## User-Assistant Dialogue Flow
+
+```mermaid
+flowchart TD
+    A[Start] --> B[Welcome Message]
+    B --> C[Ask for Story Information]
+    C --> D{User Input}
+    D --> E[Process Input]
+    E --> F{Enough Information?}
+    F -->|No| G[Ask Follow-up Question]
+    G --> D
+    F -->|Yes| H[Generate Article]
+    H --> I[Display Article]
+    I --> J{User Restart?}
+    J -->|Yes| B
+    J -->|No| K[End]
+
+    style B fill:#f9f,stroke:#333,stroke-width:2px
+    style C fill:#bbf,stroke:#333,stroke-width:2px
+    style G fill:#bbf,stroke:#333,stroke-width:2px
+    style H fill:#bfb,stroke:#333,stroke-width:2px
+    style I fill:#fbb,stroke:#333,stroke-width:2px
+```
+
 ## Supported by
 
 This project was made possible through the collaboration with [42 Heilbronn](https://www.42heilbronn.de/en/) and [Heilbronner Stimme](https://www.stimme.de).
